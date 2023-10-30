@@ -11,7 +11,8 @@ class Post(BaseModel):
     content: str
     published: bool = True
     rating: Optional[int] = None
-
+    
+ 
 my_posts = [
     {"title": "title 1", "content": "content 1", "id": 1}, 
     {"title": "title 2", "content": "content 2", "id": 2}
@@ -88,3 +89,19 @@ def delete_post(id: int):
 
     my_posts.pop(index)
     return {"message": 'post was successfully deleted'}
+
+@app.put("/posts/{id}")
+def update_post(id: int, post: Post):
+    print(post)
+
+    index = find_index_post(id)
+
+    if index == None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, 
+                        detail= f"post with id {id} was not found" )
+    
+    post_dict = post.dict()
+    post_dict['id'] = id
+    my_posts[index] = post_dict 
+
+    return {"message": post_dict}
